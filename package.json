@@ -1,0 +1,25 @@
+{
+  "name": "sample_app",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "sample application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "sample",
+    "application"
+  ],
+  "author": "Felix Zhang",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
+    "prime-number-check": "^1.0.1"
+  },
+  "devDependencies": {
+    "jest": "^30.0.4"
+  }
+}

@@ -1,0 +1,321 @@
+openapi: 3.0.0
+info:
+  title: Currency Watchlist API
+  version: 1.0.0
+  description: API for managing users, watchlists, and currency data.
+
+servers:
+  - url: http://localhost:3000
+    description: Local server
+
+paths:
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created
+
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      summary: Update user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated
+    delete:
+      summary: Delete user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: User deleted
+
+  /users/search:
+    get:
+      summary: Search users
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Name to search
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /watchlists:
+    get:
+      summary: Get all watchlists
+      responses:
+        '200':
+          description: List of watchlists
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Watchlist'
+    post:
+      summary: Create a new watchlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Watchlist'
+      responses:
+        '201':
+          description: Watchlist created
+
+  /watchlists/{id}:
+    get:
+      summary: Get watchlist by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single watchlist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Watchlist'
+    put:
+      summary: Update watchlist
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Watchlist'
+      responses:
+        '200':
+          description: Watchlist updated
+    delete:
+      summary: Delete watchlist
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Watchlist deleted
+
+  /watchlists/search:
+    get:
+      summary: Search watchlists
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: integer
+          description: User ID to filter watchlists
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Watchlist'
+
+  /currency:
+    get:
+      summary: Get all currencies
+      responses:
+        '200':
+          description: List of currencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Currency'
+    post:
+      summary: Add new currency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Currency'
+      responses:
+        '201':
+          description: Currency added
+
+  /currency/{code}:
+    get:
+      summary: Get currency by code
+      parameters:
+        - in: path
+          name: code
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single currency
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Currency'
+    put:
+      summary: Update currency
+      parameters:
+        - in: path
+          name: code
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Currency'
+      responses:
+        '200':
+          description: Currency updated
+    delete:
+      summary: Delete currency
+      parameters:
+        - in: path
+          name: code
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Currency deleted
+
+  /currency/search:
+    get:
+      summary: Search currencies
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          description: Name or code to search
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Currency'
+
+components:
+  schemas:
+    User:
+      type: object
+      required: [id, name, email]
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Alice
+        email:
+          type: string
+          example: alice@example.com
+
+    Watchlist:
+      type: object
+      required: [id, userId, currencies]
+      properties:
+        id:
+          type: integer
+          example: 101
+        userId:
+          type: integer
+          example: 1
+        currencies:
+          type: array
+          items:
+            type: string
+            example: USD
+
+    Currency:
+      type: object
+      required: [code, name, rate]
+      properties:
+        code:
+          type: string
+          example: USD
+        name:
+          type: string
+          example: United States Dollar
+        rate:
+          type: number
+          format: float
+          example: 6.89
