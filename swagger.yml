@@ -307,15 +307,21 @@ components:
 
     Currency:
       type: object
-      required: [code, name, rate]
+      required:
+        - name
+        - symbol
+        - country
+        - code
       properties:
-        code:
-          type: string
-          example: USD
         name:
           type: string
           example: United States Dollar
-        rate:
-          type: number
-          format: float
-          example: 6.89
+        symbol:
+          type: string
+          example: $
+        country:
+          type: string
+          example: United States
+        code:
+          type: string
+          example: USD
