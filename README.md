@@ -1,6 +1,6 @@
 # currency-exchange-v2
 
-A project for practice.
+for fun.
 
 ## Getting Started
 
