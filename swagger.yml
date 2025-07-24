@@ -185,93 +185,125 @@ paths:
                 items:
                   $ref: '#/components/schemas/Watchlist'
 
-  /currency:
+  /currency/all:
     get:
       summary: Get all currencies
       responses:
         '200':
-          description: List of currencies
+          description: A list of all currencies
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Currency'
+
+  /currency/add:
     post:
-      summary: Add new currency
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Currency'
-      responses:
-        '201':
-          description: Currency added
-
-  /currency/{code}:
-    get:
-      summary: Get currency by code
-      parameters:
-        - in: path
-          name: code
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: A single currency
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Currency'
-    put:
-      summary: Update currency
-      parameters:
-        - in: path
-          name: code
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Currency'
-      responses:
-        '200':
-          description: Currency updated
-    delete:
-      summary: Delete currency
-      parameters:
-        - in: path
-          name: code
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Currency deleted
-
-  /currency/search:
-    get:
-      summary: Search currencies
+      summary: Add a new currency
       parameters:
         - in: query
           name: name
           schema:
             type: string
-          description: Name or code to search
+          required: true
+          description: Full name of the currency
+        - in: query
+          name: symbol
+          schema:
+            type: string
+          required: true
+          description: Currency symbol
+        - in: query
+          name: country
+          schema:
+            type: string
+          required: true
+          description: Country of the currency
+        - in: query
+          name: code
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 3
+          required: true
+          description: 3-letter currency code
+      responses:
+        '201':
+          description: Currency successfully added
+
+  /currency/remove:
+    delete:
+      summary: Remove a currency by code
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 3
+          required: true
+          description: 3-letter currency code
       responses:
         '200':
-          description: Search results
+          description: Currency successfully removed
+
+  /currency/modify:
+    put:
+      summary: Modify an existing currency
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: Full name of the currency
+        - in: query
+          name: symbol
+          schema:
+            type: string
+          required: true
+          description: Currency symbol
+        - in: query
+          name: country
+          schema:
+            type: string
+          required: true
+          description: Country of the currency
+        - in: query
+          name: code
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 3
+          required: true
+          description: 3-letter currency code
+      responses:
+        '200':
+          description: Currency successfully modified
+
+  /currency/search:
+    get:
+      summary: Search for a currency by code
+      parameters:
+        - in: query
+          name: code
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 3
+          required: true
+          description: 3-letter currency code
+      responses:
+        '200':
+          description: Currency found
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Currency'
+                $ref: '#/components/schemas/Currency'
+        '404':
+          description: Currency not found
+
 
 components:
   schemas:
@@ -307,15 +339,21 @@ components:
 
     Currency:
       type: object
-      required: [code, name, rate]
+      required:
+        - name
+        - symbol
+        - country
+        - code
       properties:
-        code:
-          type: string
-          example: USD
         name:
           type: string
           example: United States Dollar
-        rate:
-          type: number
-          format: float
-          example: 6.89
+        symbol:
+          type: string
+          example: $
+        country:
+          type: string
+          example: United States
+        code:
+          type: string
+          example: USD
