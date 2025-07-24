@@ -1,4 +1,4 @@
-import { createAServer } from '../dbConnect.js';
+import { createAServer } from '../dbconnect.js';
 const connection = createAServer();
 
 // Get all currencies
