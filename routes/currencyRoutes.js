@@ -6,7 +6,7 @@ export const router = express.Router();
 router.get('/currencies', currencyController.getCurrencies);
 router.get('/currencies/search', currencyController.searchCurrency);
 router.get('/currencies/:id', currencyController.getCurrencyById);
-router.post('/currencies', currencyController.createCurrency);
-router.put('/currencies/:id', currencyController.updateCurrency);
-router.delete('/currencies/:id', currencyController.deleteCurrency);
+router.post('/currencies/insert', currencyController.createCurrency);
+router.put('/currencies/update/:id', currencyController.updateCurrency);
+router.delete('/currencies/delete/:id', currencyController.deleteCurrency);
 
