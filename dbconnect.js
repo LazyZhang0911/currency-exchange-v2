@@ -4,7 +4,7 @@ export function createAServer() {
         host: "localhost",
         user: "root",
         password: "n3u3da!",
-        database: "currency"})
+        database: "conygre"})
     
         connection.connect((err) => {
         if (err) {

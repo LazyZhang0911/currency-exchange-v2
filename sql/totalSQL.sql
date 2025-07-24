@@ -1,10 +1,10 @@
 -- 创建数据库，并设置字符集为 utf8mb4
-CREATE DATABASE IF NOT EXISTS currency
+CREATE DATABASE IF NOT EXISTS conygre
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
 -- 选择数据库
-USE currency;
+USE conygre;
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int NOT NULL AUTO_INCREMENT,
