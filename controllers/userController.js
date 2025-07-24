@@ -81,33 +81,59 @@ export async function updateUser(request, response) {
         const userId = request.params.id;
         const { name, email, default_currency, is_active } = request.body;
         
-        connection.query(
-            `UPDATE users 
-             SET name = ?, email = ?, default_currency = ?, is_active = ?, update_time = CURRENT_TIMESTAMP 
-             WHERE id = ?`,
-            [name, email, default_currency, is_active, userId],
-            (error, results) => {
-                if (error) {
-                    if (error.code === 'ER_DUP_ENTRY') {
-                        return response.status(409).json({ error: 'Email already exists' });
-                    }
-                    return handleDbError(error, response);
-                }
-                
-                if (results.affectedRows === 0) {
-                    return response.status(404).json({ error: 'User not found' });
-                }
-                
-                // Return the updated user
-                connection.query(
-                    'SELECT id, name, email, default_currency, is_active FROM users WHERE id = ?',
-                    [userId],
-                    (error, updatedUser) => {
-                        if (error) return handleDbError(error, response);
-                        response.json(updatedUser[0]);
-                    }
-                );
+        // Validate at least one field is provided
+        if (!name && !email && !default_currency && is_active === undefined) {
+            return response.status(400).json({ 
+                error: 'At least one field (name, email, default_currency, is_active) must be provided' 
             });
+        }
+
+        // Build dynamic SQL query
+        let sql = 'UPDATE users SET update_time = CURRENT_TIMESTAMP';
+        const params = [];
+        
+        if (name) {
+            sql += ', name = ?';
+            params.push(name);
+        }
+        if (email) {
+            sql += ', email = ?';
+            params.push(email);
+        }
+        if (default_currency) {
+            sql += ', default_currency = ?';
+            params.push(default_currency);
+        }
+        if (is_active !== undefined) {
+            sql += ', is_active = ?';
+            params.push(is_active);
+        }
+        
+        sql += ' WHERE id = ?';
+        params.push(userId);
+
+        connection.query(sql, params, (error, results) => {
+            if (error) {
+                if (error.code === 'ER_DUP_ENTRY') {
+                    return response.status(409).json({ error: 'Email already exists' });
+                }
+                return handleDbError(error, response);
+            }
+            
+            if (results.affectedRows === 0) {
+                return response.status(404).json({ error: 'User not found' });
+            }
+            
+            // Return the updated user
+            connection.query(
+                'SELECT id, name, email, default_currency, is_active FROM users WHERE id = ?',
+                [userId],
+                (error, updatedUser) => {
+                    if (error) return handleDbError(error, response);
+                    response.json(updatedUser[0]);
+                }
+            );
+        });
     } catch (error) {
         return handleDbError(error, response);
     }
