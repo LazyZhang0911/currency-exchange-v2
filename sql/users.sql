@@ -1,3 +1,11 @@
+-- 创建数据库，并设置字符集为 utf8mb4
+CREATE DATABASE IF NOT EXISTS currency
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+-- 选择数据库
+USE currency;
+
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
