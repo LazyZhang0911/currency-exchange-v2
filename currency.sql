@@ -1,12 +1,11 @@
--- 创建数据库，并设置字符集为 utf8mb4
-CREATE DATABASE IF NOT EXISTS currency
+CREATE DATABASE IF NOT EXISTS conygre
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 
--- 选择数据库
-USE currency;
+-- select db
+USE conygre;
 
--- 创建 currency 表
+-- Create currency schema
 CREATE TABLE currency (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
@@ -15,7 +14,7 @@ CREATE TABLE currency (
     code CHAR(3) NOT NULL UNIQUE
 ) CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
--- 插入数据
+-- Insert data
 INSERT INTO currency (name, symbol, country, code) VALUES
 ('United States Dollar', '$', 'United States', 'USD'),
 ('Euro', '€', 'European Union', 'EUR'),
