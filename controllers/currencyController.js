@@ -39,16 +39,33 @@ export function createCurrency(request, response) {
 // Update currency by ID
 export function updateCurrency(request, response) {
   const currencyId = request.params.id;
-  const { name, symbol, country, code } = request.body;
-  connection.query(
-    "UPDATE currency SET name = ?, symbol = ?, country = ?, code = ? WHERE id = ?",
-    [name, symbol, country, code, currencyId],
-    (error, results) => {
-      if (error) return response.status(500).json({ error: "Update error" });
-      response.json({ message: "Currency updated" });
+  const allowedFields = ['name', 'symbol', 'country', 'code'];
+  const updates = [];
+  const values = [];
+
+  for (const field of allowedFields) {
+    if (field in request.body) {
+      updates.push(`${field} = ?`);
+      values.push(request.body[field]);
     }
-  );
+  }
+
+  if (updates.length === 0) {
+    return response.status(400).json({ error: "No fields provided for update" });
+  }
+
+  values.push(currencyId); // 最后添加 WHERE 子句中的 id
+
+  const sql = `UPDATE currency SET ${updates.join(', ')} WHERE id = ?`;
+  connection.query(sql, values, (error, results) => {
+    if (error) {
+      console.error("Update error:", error);
+      return response.status(500).json({ error: "Update failed" });
+    }
+    response.json({ message: "Currency updated", fieldsChanged: updates.length });
+  });
 }
+
 
 // Delete currency by ID
 export function deleteCurrency(request, response) {
