@@ -74,8 +74,15 @@ export function deleteCurrency(request, response) {
     "DELETE FROM currency WHERE id = ?",
     [currencyId],
     (error, results) => {
-      if (error) return response.status(500).json({ error: "Delete error" });
-      response.status(204).end();
+//      if (error) return response.status(500).json({ error: "Delete error" });
+//      response.status(200).json({message:"successful deleted"});
+        if (error) {
+          return response.status(500).json({ error: "Delete error" });
+        }
+        if (results.affectedRows === 0) {
+          return response.status(404).json({ error: "Currency not found" });
+        }
+        return response.status(200).json({ message: "Successfully deleted" });
     }
   );
 }
