@@ -134,6 +134,7 @@ export async function deleteUser(request, response) {
 export async function searchUser(request, response) {
     try {
         const query = request.query.q;
+        console.log('Search query:', query);
         if (!query) {
             return response.status(400).json({ error: 'Search query is required' });
         }
