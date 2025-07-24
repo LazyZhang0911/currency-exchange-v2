@@ -31,7 +31,7 @@ app.use('/api', userRoutes);
 app.use('/api', watchlistRoutes);
 app.use('/api', currencyRoutes);
 
-const PORT = 8081;
+const PORT = 8088;
 app.listen(PORT, () => {
   console.log(`服务器已启动：http://localhost:${PORT}`);
 });

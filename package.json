@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
+    "mysql": "^2.18.1",
     "node-fetch": "^3.3.2",
     "prime-number-check": "^1.0.1"
   },
