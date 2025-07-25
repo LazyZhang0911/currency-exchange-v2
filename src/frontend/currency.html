@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currency Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    input, button {
+      padding: 8px;
+      margin: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+    th {
+      background-color: #eee;
+    }
+    .section {
+      margin-bottom: 30px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>💱 Currency Manager</h1>
+
+  <div class="section" style="display: flex; gap: 40px;">
+    <div style="flex: 1;">
+      <h2>🔍 Search Currencies</h2>
+      <input type="text" id="searchInput" placeholder="Enter keyword..." />
+      <button onclick="searchCurrencies()">Search</button>
+    </div>
+
+    <div style="flex: 1;">
+      <h2>🔍 Find Currency by ID</h2>
+      <input type="number" id="currencyIdInput" placeholder="Enter ID..." />
+      <button onclick="getCurrencyById()">Query</button>
+      <div id="currencyResult" style="margin-top: 10px;"></div>
+    </div>
+  </div>
+
+
+  <div class="section">
+    <h2>📋 All Currencies</h2>
+    <button onclick="fetchCurrencies()">Refresh</button>
+    <table id="currencyTable">
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Symbol</th><th>Country</th><th>Code</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>✏️ Update Currency</h2>
+    <input type="number" id="updateId" placeholder="Currency ID to update..." /><br>
+    <input type="text" id="updateName" placeholder="New name (optional)" />
+    <input type="text" id="updateSymbol" placeholder="New symbol (optional)" />
+    <input type="text" id="updateCountry" placeholder="New country (optional)" />
+    <input type="text" id="updateCode" placeholder="New code (optional)" />
+    <button onclick="updateCurrency()">Update</button>
+  </div>
+
+
+  <div class="section">
+    <h2>🗑️ Delete Currency</h2>
+    <input type="number" id="deleteIdInput" placeholder="Enter ID to delete..." />
+    <button onclick="deleteCurrency()">Delete</button>
+  </div>  
+
+  <div class="section">
+    <h2>➕ Add New Currency</h2>
+    <input type="text" id="addName" placeholder="Name" />
+    <input type="text" id="addSymbol" placeholder="Symbol" />
+    <input type="text" id="addCountry" placeholder="Country" />
+    <input type="text" id="addCode" placeholder="Code" />
+    <button onclick="createCurrency()">Add</button>
+  </div>
+
+  <script>
+    const apiBase = 'http://localhost:8088/api/currencies';
+
+    function fetchCurrencies() {
+      fetch(`${apiBase}`)
+        .then(res => res.json())
+        .then(data => renderTable(data))
+        .catch(err => alert("Error loading currencies"));
+    }
+
+    function searchCurrencies() {
+      const query = document.getElementById("searchInput").value;
+      fetch(`${apiBase}/search?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => renderTable(data))
+        .catch(err => alert("Search error"));
+    }
+
+    function getCurrencyById() {
+        const id = document.getElementById("currencyIdInput").value;
+        fetch(`${apiBase}/${id}`)
+          .then(res => {
+            if (!res.ok) throw new Error("Currency not found");
+            return res.json();
+          })
+          .then(data => {
+            const container = document.getElementById("currencyResult");
+            container.innerHTML = `<p><strong>${data.name}</strong> (${data.symbol}) - ${data.country} [${data.code}]</p>`;
+          })
+          .catch(err => alert("Currency not found"));
+    }
+
+    function updateCurrency() {
+      const id = document.getElementById("updateId").value;
+      const payload = {};
+      const fields = ["Name", "Symbol", "Country", "Code"];
+
+      fields.forEach(field => {
+        const value = document.getElementById("update" + field).value;
+        if (value.trim()) payload[field.toLowerCase()] = value;
+      });
+
+      if (Object.keys(payload).length === 0) {
+        alert("Please provide at least one field to update.");
+        return;
+      }
+
+      fetch(`${apiBase}/update/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Update failed");
+        return res.json();
+      })
+      .then(data => {
+        alert(data.message + ` (${data.fieldsChanged} field(s) updated)`);
+        fetchCurrencies();
+      })
+      .catch(() => alert("Failed to update currency"));
+    }
+
+    function createCurrency() {
+        const payload = {
+          name: document.getElementById("addName").value,
+          symbol: document.getElementById("addSymbol").value,
+          country: document.getElementById("addCountry").value,
+          code: document.getElementById("addCode").value
+        };
+      
+        fetch(`${apiBase}/insert`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert("Currency added with ID: " + data.id);
+          fetchCurrencies();
+        })
+        .catch(err => alert("Failed to add currency"));
+    }
+
+    function deleteCurrency() {
+        const id = document.getElementById("deleteIdInput").value;
+        fetch(`${apiBase}/delete/${id}`, {
+          method: "DELETE"
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("Currency not found");
+          return res.json();
+        })
+        .then(data => {
+          alert(data.message);
+          fetchCurrencies();
+        })
+        .catch(err => alert("Delete failed"));
+    }
+    
+      
+    function renderTable(data) {
+      const tbody = document.querySelector("#currencyTable tbody");
+      tbody.innerHTML = "";
+      data.forEach(item => {
+        const row = `<tr>
+          <td>${item.id}</td><td>${item.name}</td><td>${item.symbol}</td><td>${item.country}</td><td>${item.code}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    // auto loading...
+    window.onload = fetchCurrencies;
+  </script>
+</body>
+</html>

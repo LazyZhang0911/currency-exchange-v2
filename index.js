@@ -21,9 +21,11 @@ import express from 'express';
 import {router as userRoutes} from './routes/userRoutes.js';
 import {router as watchlistRoutes} from './routes/watchlistRoutes.js';
 import {router as currencyRoutes} from './routes/currencyRoutes.js';
+import cors from 'cors';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // 挂载路由
