@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Content</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex; /* 使用 Flexbox 布局 */
+            flex-direction: column; /* 垂直方向排列子元素 */
+            min-height: 100vh; /* 确保 body 至少占据视口高度 */
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            flex-shrink: 0; /* 防止 header 缩小 */
+        }
+
+        /* --- main 容器的样式调整 --- */
+        main {
+            display: flex; /* main 内部也使用 Flexbox */
+            flex-grow: 1; /* main 占据剩余垂直空间 */
+        }
+
+        /* --- nav 的样式调整 --- */
+        nav {
+            background-color: #333;
+            width: 200px; /* 固定导航栏宽度 */
+            flex-shrink: 0; /* 防止导航栏缩小 */
+            padding-top: 20px; /* 增加顶部内边距 */
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px; /* 调整内边距 */
+            display: block; /* 使链接块级化 */
+            border-bottom: 1px solid #555; /* 添加分隔线 */
+        }
+        nav ul li a:hover {
+            background-color: #575757; /* 悬停背景色 */
+            text-decoration: none; /* 移除下划线，使用背景色高亮 */
+        }
+        nav ul li:last-child a {
+            border-bottom: none; /* 最后一个链接不显示底部边框 */
+        }
+
+        /* --- 内容区域 section 的样式调整 --- */
+        .content-area { /* 新增一个 div 来包裹所有 section */
+            flex-grow: 1; /* 占据剩余水平空间 */
+            padding: 20px;
+            background-color: #f4f4f4; /* 添加背景色以区分 */
+            overflow-y: auto; /* 如果内容过多，允许垂直滚动 */
+        }
+
+        /* 默认隐藏所有 section */
+        .content-area section {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* 默认只显示 ID 为 'home' 的 section */
+        .content-area section#home {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Currency Exchange</h1>
+    </header>
+    <main>
+        <nav>
+            <ul>
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#user" class="nav-link">User</a></li>
+                <li><a href="#exchange" class="nav-link">Exchange</a></li>
+            </ul>
+        </nav>
+        <div class="content-area"> <section id="home">
+                <h2>Home</h2>
+                <p>Welcome to the Currency Exchange application! Use the navigation on the left to explore different sections.</p>
+                <p>Here you can find general information and updates regarding our services. We strive to provide the most accurate and up-to-date exchange rates for your convenience.</p>
+                <p>Feel free to browse around and get familiar with the platform. Our goal is to make your currency exchange experience as smooth and efficient as possible.</p>
+            </section>
+            <section id="user">
+                <h2>User Profile</h2>
+                <p>This section is for user-specific information. You can view your account details, transaction history, and manage your preferences here.</p>
+                <p>Currently, you are logged in as a guest user. Please log in or register to access full features.</p>
+            </section>
+            <section id="exchange">
+                <h2>Currency Exchange Tools</h2>
+                <p>In this section, you can perform currency conversions and view real-time exchange rates.</p>
+                <p>Select your desired currencies, enter the amount, and get an instant conversion. We support a wide range of global currencies.</p>
+                <p>Example: 1 USD = 7.2 CNY (Rates are indicative and may vary).</p>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-area section'); // 注意：现在选择器是 .content-area section
+
+            function showSection(targetId) {
+                sections.forEach(section => {
+                    if ('#' + section.id === targetId) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    showSection(targetId);
+                });
+            });
+
+            // 初始显示：如果 URL 中有哈希值，则显示对应的 section，否则显示 home
+            if (window.location.hash) {
+                showSection(window.location.hash);
+            } else {
+                showSection('#home');
+            }
+        });
+    </script>
+</body>
+</html>
