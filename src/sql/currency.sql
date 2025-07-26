@@ -1,5 +1,5 @@
 -- 创建数据库，并设置字符集为 utf8mb4
-CREATE DATABASE IF NOT EXISTS currency
+CREATE DATABASE IF NOT EXISTS conygre
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 

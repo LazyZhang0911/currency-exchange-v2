@@ -5,7 +5,6 @@ export function createAServer() {
         user: "root",
         password: "n3u3da!",
         database: "conygre"})
-    
         connection.connect((err) => {
         if (err) {
             console.error('Databse connection failed:', err);
